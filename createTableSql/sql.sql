@@ -1,0 +1,10 @@
+CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL DEFAULT '',
+  `age` int(3) NOT NULL DEFAULT '0',
+  `sex` tinyint(3) NOT NULL DEFAULT '0',
+  `phone` varchar(40) NOT NULL DEFAULT '',
+  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4
