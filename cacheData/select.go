@@ -26,35 +26,20 @@ func (user *User) Insert() {
 	//这里使用了Table()函数，如果你没有指定全局表名禁用复数，或者是表名跟结构体名不一样的时候
 	//你可以自己在sql中指定表名。这里是示例，本例中这个函数可以去除。
 	db.Table("user").Create(user)
+	//db.Table("user").Create(user)
 }
 
 func (user *User) Update() {
-	//这里使用了Table()函数，如果你没有指定全局表名禁用复数，或者是表名跟结构体名不一样的时候
-	//你可以自己在sql中指定表名。这里是示例，本例中这个函数可以去除。
-	db.Table("user").Create(user)
+	user = &User{Id: user.Id, Name: "xiaoming"}
+	db.Model(&user).Update(user)
 }
 
 func (user *User) Del() {
-	db.Delete(&user)
+	db.Where("id =  ?", user.Id).Delete(&user)
 
-	//delete from user where id > 11;
-	db.Delete(&User{}, "id > ?", 11)
 }
 
-func (user *User) query() (u []User) {
-	db.Find(&u)
-
-	db.Find(&u, "id > ? and age > ?", 2, 12)
-
-	db.Where("id > ?", 2).Find(&u)
-
-	db.Where("name in (?)", []string{"xiaoming", "xiaohong"}).Find(&u)
-
-	db.First(&u)
-
-	db.First(&u, "where sex = ?", 1)
-
-	db.Last(&u)
-
+func (user *User) Query() (u []User) {
+	db.Where("id = ?", user.Id).Find(&u)
 	return u
 }
