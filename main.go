@@ -5,18 +5,24 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-
 )
 
 func main() {
 	//testOriginOrmCreate()
+	//TestCacheDataInsert()
 	//testOriginOrmFindByPk()
+	//testOriginOrmFindByPkWithCache()
+
 	//testOriginOrmUpdate()
+	//testOriginOrmUpdateWithCache()
 	//testOriginOrmDel()
-	TestRedis()
+	testOriginOrmDelWithCache()
+
+	//TestRedis()
+
 }
 
-//按照之前Orm
+//插入 =================
 func testOriginOrmCreate() {
 	user := originOrm.User{
 		Id:    0,
@@ -28,6 +34,19 @@ func testOriginOrmCreate() {
 	user.Insert()
 }
 
+func TestCacheDataInsert()  {
+	user := originOrm.User{
+		Id:    0,
+		Name:  "1",
+		Age:   1,
+		Sex:   1,
+		Phone: "1",
+	}
+	user.InsertWithCache()
+}
+
+//查找 =================
+
 func testOriginOrmFindByPk() {
 	user := originOrm.User{
 		Id: 8,
@@ -36,19 +55,42 @@ func testOriginOrmFindByPk() {
 	fmt.Println(users)
 }
 
-//按照之前Orm
+func testOriginOrmFindByPkWithCache() {
+	user := originOrm.User{
+		Id: 1,
+	}
+	users := user.QueryWithCache()
+	fmt.Println(users)
+}
+
+//更新 =================
 func testOriginOrmUpdate() {
 	user := originOrm.User{
 		Id: 8,
 	}
 	user.Update()
 }
+func testOriginOrmUpdateWithCache() {
+	user := originOrm.User{
+		Id: 1,
+	}
+	user.UpdateWithCache()
+}
+
+//删除 =================
 
 func testOriginOrmDel() {
 	user := originOrm.User{
 		Id: 8,
 	}
 	user.Del()
+}
+
+func testOriginOrmDelWithCache() {
+	user := originOrm.User{
+		Id: 1,
+	}
+	user.DelWithCache()
 }
 
 //按照之后的Orm
@@ -62,6 +104,7 @@ func testCacheDataOrm() {
 	}
 	user.Insert()
 }
+
 
 func TestRedis()  {
 	c, err := redis.Dial("tcp", "127.0.0.1:6379")

@@ -37,20 +37,28 @@ func (dBWithCache DBWithCache) Create(data interface{}) {
 */
 func (dBWithCache DBWithCache) Delete( value interface{}, where ...interface{}) {
 	dBWithCache.DB.Where(where).Delete(value)
+	if dBWithCache.IsUserCache == true {
+		fmt.Println("说明需要添加缓存了")
+	}
 }
 
 /**
 改
 */
 func (dBWithCache DBWithCache)  Update(attrs interface{}){
-	dBWithCache.DB.Table(dBWithCache.TableName).Update(attrs)
-	dBWithCache.DB.Model(&attrs).Update(attrs)
+	 dBWithCache.DB.Model(&attrs).Table("user").Update(attrs)
+	if dBWithCache.IsUserCache == true {
+		fmt.Println("说明需要添加缓存了")
+	}
 }
 /**
 查
  */
 func (dBWithCache DBWithCache)  Query(value interface{}, where ...interface{}){
 	dBWithCache.DB.Find(value , where)
+	if dBWithCache.IsUserCache == true {
+		fmt.Println("说明需要添加缓存了")
+	}
 }
 
 

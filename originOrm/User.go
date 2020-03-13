@@ -1,11 +1,15 @@
 package originOrm
 
 import (
+	cacheDataOrm "cache-component/cacheData"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 var db *gorm.DB
+
+var dbWithCache cacheDataOrm.DBWithCache
+
 
 type User struct {
 	Id    int
@@ -22,27 +26,55 @@ func init() {
 		panic(err)
 	}
 	//设置全局表名禁用复数
+	dbWithCache.DB = db
 	db.SingularTable(true)
 }
 
+/**
+增
+ */
 func (user *User) Insert() {
-	//这里使用了Table()函数，如果你没有指定全局表名禁用复数，或者是表名跟结构体名不一样的时候
-	//你可以自己在sql中指定表名。这里是示例，本例中这个函数可以去除。
 	db.Table("user").Create(user)
-	//db.Table("user").Create(user)
 }
-
+/**
+增 cache
+*/
+func (user *User) InsertWithCache() {
+	dbWithCache.SetCache().Table("user").Create(user)
+}
+/**
+更新  update
+ */
 func (user *User) Update() {
 	user = &User{Id: user.Id, Name: "xiaoming"}
-	db.Model(&user).Update(user)
+	db.Model(&user).Table("user").Update(user)
 }
 
+func (user *User) UpdateWithCache() {
+	user = &User{Id: user.Id, Name: "xiaoming"}
+	dbWithCache.SetCache().Table("user").Update(user)
+}
+/**
+删除
+*/
 func (user *User) Del() {
-	db.Where("id =  ?", user.Id).Delete(&user)
+	db.Delete(&user,"id =  ?", user.Id)
 
 }
 
+func (user *User) DelWithCache() {
+	dbWithCache.SetCache().Table("user").Delete(&user,"id =  ?", user.Id)
+
+}
+/**
+查找
+*/
 func (user *User) Query() (u []User) {
 	db.Where("id = ?", user.Id).Find(&u)
+	return u
+}
+
+func (user *User) QueryWithCache() (u []User) {
+	dbWithCache.SetCache().Table("user").Query(&u,"id =  ?", user.Id)
 	return u
 }
