@@ -6,40 +6,44 @@ import (
 )
 
 type DBWithCache struct {
-	DB *gorm.DB
+	DB          *gorm.DB
 	IsUserCache bool
-	TableName string
+	TableName   string
 }
 
-func (dBWithCache *DBWithCache)  SetCache() *DBWithCache{
+func (dBWithCache *DBWithCache) SetCache() *DBWithCache {
 	dBWithCache.IsUserCache = true
-	return  dBWithCache
+	return dBWithCache
 }
 
-func (dBWithCache *DBWithCache)  Table(table string) *DBWithCache{
+func (dBWithCache *DBWithCache) Table(table string) *DBWithCache {
 	dBWithCache.IsUserCache = true
-	return  dBWithCache
+	return dBWithCache
 }
 
 /**
 增
- */
+*/
 func (dBWithCache DBWithCache) Create(data interface{}) {
-
 	res := dBWithCache.DB.Table(dBWithCache.TableName).Create(data)
-	if dBWithCache.IsUserCache == true {
-		fmt.Println("说明需要添加缓存了")
+	if dBWithCache.IsUserCache == false {
+		return
 	}
 	var newObject = data
 	res.Row().Scan(newObject)
+	getReisKey := GetReisKey(data)
 
-	fmt.Println(newObject)
+	redisData := CacheRedisData{}
+	redisData.CacheVersion = "1.0"
+	redisData.RealData = newObject
+
+	SetRedis(getReisKey, redisData)
 }
 
 /**
 删
 */
-func (dBWithCache DBWithCache) Delete( value interface{}, where ...interface{}) {
+func (dBWithCache DBWithCache) Delete(value interface{}, where ...interface{}) {
 	dBWithCache.DB.Where(where).Delete(value)
 	if dBWithCache.IsUserCache == true {
 		fmt.Println("说明需要添加缓存了")
@@ -49,20 +53,19 @@ func (dBWithCache DBWithCache) Delete( value interface{}, where ...interface{}) 
 /**
 改
 */
-func (dBWithCache DBWithCache)  Update(attrs interface{}){
-	 dBWithCache.DB.Model(&attrs).Table("user").Update(attrs)
+func (dBWithCache DBWithCache) Update(attrs interface{}) {
+	dBWithCache.DB.Model(&attrs).Table("user").Update(attrs)
 	if dBWithCache.IsUserCache == true {
 		fmt.Println("说明需要添加缓存了")
 	}
 }
+
 /**
 查
- */
-func (dBWithCache DBWithCache)  Query(value interface{}, where ...interface{}){
-	dBWithCache.DB.Find(value , where)
+*/
+func (dBWithCache DBWithCache) Query(value interface{}, where ...interface{}) {
+	dBWithCache.DB.Find(value, where)
 	if dBWithCache.IsUserCache == true {
 		fmt.Println("说明需要添加缓存了")
 	}
 }
-
-

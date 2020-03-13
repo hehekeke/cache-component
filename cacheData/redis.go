@@ -1,19 +1,25 @@
 package cacheDataOrm
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 )
 
-func SetRedis(key string, data interface{}) error {
+type CacheRedisData struct {
+	CacheVersion string
+	RealData     interface{}
+}
+
+func SetRedis(key string, data CacheRedisData) error {
 	c, err := redis.Dial("tcp", "127.0.0.1:6379")
 	if err != nil {
 		fmt.Println("Connect to redis error", err)
 		return err
 	}
 	defer c.Close()
-
-	_, err = c.Do("SET", "mykey", "superWang1111")
+	marshal, _ := json.Marshal(data)
+	_, err = c.Do("SET", key, marshal)
 	return err
 }
 
