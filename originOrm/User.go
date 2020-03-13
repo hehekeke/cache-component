@@ -14,8 +14,8 @@ var dbWithCache cacheDataOrm.DBWithCache
 type User struct {
 	Id    int
 	Name  string
-	Age   int
-	Sex   byte
+	Age   string
+	Sex   string
 	Phone string
 }
 

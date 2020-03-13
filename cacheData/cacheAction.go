@@ -26,10 +26,14 @@ func (dBWithCache *DBWithCache)  Table(table string) *DBWithCache{
  */
 func (dBWithCache DBWithCache) Create(data interface{}) {
 
-	dBWithCache.DB.Table(dBWithCache.TableName).Create(data)
+	res := dBWithCache.DB.Table(dBWithCache.TableName).Create(data)
 	if dBWithCache.IsUserCache == true {
 		fmt.Println("说明需要添加缓存了")
 	}
+	var newObject = data
+	res.Row().Scan(newObject)
+
+	fmt.Println(newObject)
 }
 
 /**
