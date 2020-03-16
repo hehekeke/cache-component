@@ -1,7 +1,7 @@
 package cacheDataOrm
 
 import (
-	"encoding/json"
+	"cache-component/mcpack2"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 )
@@ -18,7 +18,7 @@ func SetRedis(key string, data CacheRedisData) error {
 		return err
 	}
 	defer c.Close()
-	marshal, _ := json.Marshal(data)
+	marshal, _ := mcpack2.Marshal(data)
 	_, err = c.Do("SET", key, marshal)
 	return err
 }
@@ -31,7 +31,7 @@ func GetFromRedis(key string) (interface{}, error) {
 	}
 	defer c.Close()
 
-	value, err := redis.String(c.Do("GET", key))
+	value, err := redis.Bytes(c.Do("GET", key))
 	if err != nil {
 		return "", err
 	}

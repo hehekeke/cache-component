@@ -3,6 +3,8 @@ github.com/garyburd/redigo/redis
 github.com/garyburd/redigo/internal
 # github.com/go-sql-driver/mysql v1.4.1
 github.com/go-sql-driver/mysql
+# github.com/goinggo/mapstructure v0.0.0-20140717182941-194205d9b4a9
+github.com/goinggo/mapstructure
 # github.com/jinzhu/gorm v1.9.12
 github.com/jinzhu/gorm/dialects/mysql
 github.com/jinzhu/gorm

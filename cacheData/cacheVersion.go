@@ -30,3 +30,7 @@ func GetReisKey(key interface{}) string {
 	var getMd5OriginKey = fmt.Sprintf("%s%s%s", f.Name(), file, string(keyBytes))
 	return Md5V(getMd5OriginKey)
 }
+
+func GetReisKeyByPk(tableName string, key interface{}) string {
+	return fmt.Sprintf("find_by_pk:%s:%d", tableName, key)
+}

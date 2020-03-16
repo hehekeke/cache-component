@@ -4,14 +4,35 @@ import (
 	"cache-component/originOrm"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
+	"github.com/goinggo/mapstructure"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+type People struct {
+	Name string `json:"name_title"`
+	Age  int    `json:"age_size"`
+}
+
+func MapToStructDemo() {
+	mapInstance := make(map[string]interface{})
+	mapInstance["Name"] = "jqw"
+	mapInstance["Age"] = 18
+
+	var people People
+	err := mapstructure.Decode(mapInstance, &people)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(people)
+}
+
 func main() {
+	//MapToStructDemo()
+
 	//testOriginOrmCreate()
-	TestCacheDataInsert()
+	//TestCacheDataInsert()
 	//testOriginOrmFindByPk()
-	//testOriginOrmFindByPkWithCache()
+	testOriginOrmFindByPkWithCache()
 
 	//testOriginOrmUpdate()
 	//testOriginOrmUpdateWithCache()
@@ -23,7 +44,7 @@ func main() {
 }
 
 var user = originOrm.User{
-	Id:    0,
+	Id:    20,
 	Name:  "1",
 	Age:   "1",
 	Sex:   "1",
@@ -37,7 +58,6 @@ func testOriginOrmCreate() {
 }
 
 func TestCacheDataInsert() {
-
 	user.InsertWithCache()
 }
 

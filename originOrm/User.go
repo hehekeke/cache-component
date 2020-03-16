@@ -2,6 +2,7 @@ package originOrm
 
 import (
 	cacheDataOrm "cache-component/cacheData"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
@@ -10,9 +11,8 @@ var db *gorm.DB
 
 var dbWithCache cacheDataOrm.DBWithCache
 
-
 type User struct {
-	Id    int
+	Id    int `json:id`
 	Name  string
 	Age   string
 	Sex   string
@@ -32,19 +32,21 @@ func init() {
 
 /**
 增
- */
+*/
 func (user *User) Insert() {
 	db.Table("user").Create(user)
 }
+
 /**
 增 cache
 */
 func (user *User) InsertWithCache() {
-	dbWithCache.SetCache().Table("user").Create(user)
+	dbWithCache.Table("user").Create(user).SetRedisByPk(user.Id, user)
 }
+
 /**
 更新  update
- */
+*/
 func (user *User) Update() {
 	user = &User{Id: user.Id, Name: "xiaoming"}
 	db.Model(&user).Table("user").Update(user)
@@ -54,27 +56,30 @@ func (user *User) UpdateWithCache() {
 	user = &User{Id: user.Id, Name: "xiaoming"}
 	dbWithCache.SetCache().Table("user").Update(user)
 }
+
 /**
 删除
 */
 func (user *User) Del() {
-	db.Delete(&user,"id =  ?", user.Id)
+	db.Delete(&user, "id =  ?", user.Id)
 
 }
 
 func (user *User) DelWithCache() {
-	dbWithCache.SetCache().Table("user").Delete(&user,"id =  ?", user.Id)
+	dbWithCache.SetCache().Table("user").Delete(&user, "id =  ?", user.Id)
 
 }
+
 /**
 查找
 */
-func (user *User) Query() (u []User) {
+func (user *User) Query() (u User) {
 	db.Where("id = ?", user.Id).Find(&u)
 	return u
 }
 
-func (user *User) QueryWithCache() (u []User) {
-	dbWithCache.SetCache().Table("user").Query(&u,"id =  ?", user.Id)
+func (user *User) QueryWithCache() (u User) {
+	dbWithCache.SetCache().Table("user").QueryPkId(u, user.Id).SetRedisByPk(user.Id, u)
+	fmt.Println(u, "11111")
 	return u
 }
